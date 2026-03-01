@@ -32,3 +32,11 @@ discord_send() {
 
   curl -sS -X POST -H "Content-Type: application/json" -d "$payload" "$DISCORD_WEBHOOK_URL" >/dev/null
 }
+discord_send_summary() {
+  local title="$1"
+  local summary="$2"
+  local level="${3:-info}" # info|warn|critical
+
+  # Use same sender for now
+  discord_send "$title" "$summary" "$level"
+}
