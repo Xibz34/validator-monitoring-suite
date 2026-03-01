@@ -39,6 +39,8 @@ run_one() {
 main() {
   need_cmd curl
   need_cmd systemctl
+  need_cmd jq
+  need_cmd df
 
   echo "[runner] starting checks..."
 

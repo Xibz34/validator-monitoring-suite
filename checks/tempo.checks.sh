@@ -5,6 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # shellcheck disable=SC1091
 source "$ROOT_DIR/lib/load_env.sh"
+source "$ROOT_DIR/lib/health.sh"
 
 tempo_run_checks() {
   local failed=0
@@ -22,6 +23,9 @@ tempo_run_checks() {
     echo "Tempo: RPC unreachable"
     failed=1
   fi
+
+  check_height_lag "Tempo" "$TEMPO_RPC" "${TEMPO_REF_RPC:-}" "${MAX_HEIGHT_LAG:-30}" || failed=1
+  check_disk_usage "Tempo" "${DISK_MOUNTPOINT:-/}" "${DISK_WARN_PCT:-85}" || failed=1
 
   return $failed
 }

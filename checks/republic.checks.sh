@@ -5,6 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # shellcheck disable=SC1091
 source "$ROOT_DIR/lib/load_env.sh"
+source "$ROOT_DIR/lib/health.sh"
 
 republic_run_checks() {
   local failed=0
@@ -22,6 +23,12 @@ republic_run_checks() {
     echo "Republic: RPC unreachable"
     failed=1
   fi
+
+  # 4️⃣ Height lag vs reference (optional)
+  check_height_lag "Republic" "$REPUBLIC_RPC" "${REPUBLIC_REF_RPC:-}" "${MAX_HEIGHT_LAG:-30}" || failed=1
+
+  # 5️⃣ Disk usage
+  check_disk_usage "Republic" "${DISK_MOUNTPOINT:-/}" "${DISK_WARN_PCT:-85}" || failed=1
 
   # 3️⃣ Jailed Check
   need_cmd jq
